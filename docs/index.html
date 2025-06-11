@@ -17,9 +17,44 @@
             </div>
         </div>
         
-        <div class="weather-section">
-            <h2>天気</h2>
-            <p>（準備中）</p>
+        <div class="weather-card">
+            <div class="weather-header">
+                <h2>天気情報</h2>
+                <span class="location" id="location">東京</span>
+            </div>
+            
+            <div class="weather-main">
+                <div class="weather-icon">
+                    <span id="weather-emoji">☀️</span>
+                </div>
+                <div class="weather-info">
+                    <div class="temperature">
+                        <span id="temperature">25</span>°C
+                    </div>
+                    <div class="weather-description" id="weather-description">
+                        晴れ
+                    </div>
+                </div>
+            </div>
+            
+            <div class="weather-details">
+                <div class="detail-item">
+                    <span class="detail-label">湿度</span>
+                    <span class="detail-value" id="humidity">60%</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">風速</span>
+                    <span class="detail-value" id="wind-speed">3.2 m/s</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">気圧</span>
+                    <span class="detail-value" id="pressure">1013 hPa</span>
+                </div>
+            </div>
+            
+            <div class="weather-update">
+                <span id="weather-update-time">最終更新: --:--</span>
+            </div>
         </div>
         
         <div class="todo-section">
