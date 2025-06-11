@@ -17,43 +17,299 @@
             </div>
         </div>
         
-        <div class="weather-card">
-            <div class="weather-header">
-                <h2>天気情報</h2>
-                <span class="location" id="location">東京</span>
+        <div class="weather-section">
+            <h2>天気情報</h2>
+            
+            <!-- 都市選択タブ -->
+            <div class="city-tabs">
+                <button class="city-tab active" onclick="showCity('tokyo')" data-city="tokyo">
+                    <span class="tab-name">東京</span>
+                    <span class="tab-temp" id="tokyo-tab-temp">25°</span>
+                </button>
+                <button class="city-tab" onclick="showCity('kochi')" data-city="kochi">
+                    <span class="tab-name">高知</span>
+                    <span class="tab-temp" id="kochi-tab-temp">27°</span>
+                </button>
+                <button class="city-tab" onclick="showCity('naha')" data-city="naha">
+                    <span class="tab-name">那覇</span>
+                    <span class="tab-temp" id="naha-tab-temp">28°</span>
+                </button>
+                <button class="city-tab" onclick="showCity('sapporo')" data-city="sapporo">
+                    <span class="tab-name">札幌</span>
+                    <span class="tab-temp" id="sapporo-tab-temp">15°</span>
+                </button>
             </div>
             
-            <div class="weather-main">
-                <div class="weather-icon">
-                    <span id="weather-emoji">☀️</span>
-                </div>
-                <div class="weather-info">
-                    <div class="temperature">
-                        <span id="temperature">25</span>°C
+            <!-- 東京の天気予報 -->
+            <div id="tokyo" class="city-weather active">
+                <div class="forecast-container">
+                    <div class="forecast-card today">
+                        <div class="forecast-header">
+                            <div class="forecast-date">今日</div>
+                            <div class="forecast-day" id="tokyo-today-day">6月11日(水)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="tokyo-today-icon">☀️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="tokyo-today-high">25°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="tokyo-today-low">18°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="tokyo-today-desc">晴れ</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="tokyo-today-humidity">60%</span></div>
+                            <div class="detail">風速: <span id="tokyo-today-wind">3.2m/s</span></div>
+                        </div>
                     </div>
-                    <div class="weather-description" id="weather-description">
-                        晴れ
+                    
+                    <div class="forecast-card tomorrow">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明日</div>
+                            <div class="forecast-day" id="tokyo-tomorrow-day">6月12日(木)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="tokyo-tomorrow-icon">☁️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="tokyo-tomorrow-high">22°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="tokyo-tomorrow-low">16°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="tokyo-tomorrow-desc">曇り</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="tokyo-tomorrow-humidity">70%</span></div>
+                            <div class="detail">風速: <span id="tokyo-tomorrow-wind">2.8m/s</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="forecast-card day-after">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明後日</div>
+                            <div class="forecast-day" id="tokyo-dayafter-day">6月13日(金)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="tokyo-dayafter-icon">🌧️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="tokyo-dayafter-high">19°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="tokyo-dayafter-low">14°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="tokyo-dayafter-desc">雨</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="tokyo-dayafter-humidity">85%</span></div>
+                            <div class="detail">風速: <span id="tokyo-dayafter-wind">4.1m/s</span></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="weather-details">
-                <div class="detail-item">
-                    <span class="detail-label">湿度</span>
-                    <span class="detail-value" id="humidity">60%</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">風速</span>
-                    <span class="detail-value" id="wind-speed">3.2 m/s</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">気圧</span>
-                    <span class="detail-value" id="pressure">1013 hPa</span>
+                <div class="weather-update">
+                    <span id="tokyo-update-time">最終更新: --:--</span>
                 </div>
             </div>
             
-            <div class="weather-update">
-                <span id="weather-update-time">最終更新: --:--</span>
+            <!-- 高知の天気予報 -->
+            <div id="kochi" class="city-weather">
+                <div class="forecast-container">
+                    <div class="forecast-card today">
+                        <div class="forecast-header">
+                            <div class="forecast-date">今日</div>
+                            <div class="forecast-day" id="kochi-today-day">6月11日(水)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="kochi-today-icon">🌤️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="kochi-today-high">27°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="kochi-today-low">21°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="kochi-today-desc">晴れ時々曇り</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="kochi-today-humidity">65%</span></div>
+                            <div class="detail">風速: <span id="kochi-today-wind">2.5m/s</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="forecast-card tomorrow">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明日</div>
+                            <div class="forecast-day" id="kochi-tomorrow-day">6月12日(木)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="kochi-tomorrow-icon">🌧️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="kochi-tomorrow-high">24°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="kochi-tomorrow-low">19°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="kochi-tomorrow-desc">雨</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="kochi-tomorrow-humidity">80%</span></div>
+                            <div class="detail">風速: <span id="kochi-tomorrow-wind">3.5m/s</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="forecast-card day-after">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明後日</div>
+                            <div class="forecast-day" id="kochi-dayafter-day">6月13日(金)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="kochi-dayafter-icon">☀️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="kochi-dayafter-high">26°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="kochi-dayafter-low">20°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="kochi-dayafter-desc">晴れ</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="kochi-dayafter-humidity">70%</span></div>
+                            <div class="detail">風速: <span id="kochi-dayafter-wind">2.0m/s</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weather-update">
+                    <span id="kochi-update-time">最終更新: --:--</span>
+                </div>
+            </div>
+            
+            <!-- 那覇の天気予報 -->
+            <div id="naha" class="city-weather">
+                <div class="forecast-container">
+                    <div class="forecast-card today">
+                        <div class="forecast-header">
+                            <div class="forecast-date">今日</div>
+                            <div class="forecast-day" id="naha-today-day">6月11日(水)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="naha-today-icon">🌺</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="naha-today-high">28°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="naha-today-low">24°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="naha-today-desc">晴れ</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="naha-today-humidity">75%</span></div>
+                            <div class="detail">風速: <span id="naha-today-wind">4.0m/s</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="forecast-card tomorrow">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明日</div>
+                            <div class="forecast-day" id="naha-tomorrow-day">6月12日(木)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="naha-tomorrow-icon">⛅</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="naha-tomorrow-high">27°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="naha-tomorrow-low">23°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="naha-tomorrow-desc">曇り時々晴れ</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="naha-tomorrow-humidity">78%</span></div>
+                            <div class="detail">風速: <span id="naha-tomorrow-wind">3.8m/s</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="forecast-card day-after">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明後日</div>
+                            <div class="forecast-day" id="naha-dayafter-day">6月13日(金)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="naha-dayafter-icon">🌦️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="naha-dayafter-high">26°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="naha-dayafter-low">22°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="naha-dayafter-desc">小雨</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="naha-dayafter-humidity">82%</span></div>
+                            <div class="detail">風速: <span id="naha-dayafter-wind">4.5m/s</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weather-update">
+                    <span id="naha-update-time">最終更新: --:--</span>
+                </div>
+            </div>
+            
+            <!-- 札幌の天気予報 -->
+            <div id="sapporo" class="city-weather">
+                <div class="forecast-container">
+                    <div class="forecast-card today">
+                        <div class="forecast-header">
+                            <div class="forecast-date">今日</div>
+                            <div class="forecast-day" id="sapporo-today-day">6月11日(水)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="sapporo-today-icon">🌫️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="sapporo-today-high">15°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="sapporo-today-low">8°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="sapporo-today-desc">霧</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="sapporo-today-humidity">90%</span></div>
+                            <div class="detail">風速: <span id="sapporo-today-wind">1.5m/s</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="forecast-card tomorrow">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明日</div>
+                            <div class="forecast-day" id="sapporo-tomorrow-day">6月12日(木)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="sapporo-tomorrow-icon">☁️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="sapporo-tomorrow-high">18°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="sapporo-tomorrow-low">11°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="sapporo-tomorrow-desc">曇り</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="sapporo-tomorrow-humidity">75%</span></div>
+                            <div class="detail">風速: <span id="sapporo-tomorrow-wind">2.2m/s</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="forecast-card day-after">
+                        <div class="forecast-header">
+                            <div class="forecast-date">明後日</div>
+                            <div class="forecast-day" id="sapporo-dayafter-day">6月13日(金)</div>
+                        </div>
+                        <div class="forecast-main">
+                            <div class="forecast-icon" id="sapporo-dayafter-icon">☀️</div>
+                            <div class="forecast-temp">
+                                <span class="high" id="sapporo-dayafter-high">20°</span>
+                                <span class="separator">/</span>
+                                <span class="low" id="sapporo-dayafter-low">12°</span>
+                            </div>
+                        </div>
+                        <div class="forecast-desc" id="sapporo-dayafter-desc">晴れ</div>
+                        <div class="forecast-details">
+                            <div class="detail">湿度: <span id="sapporo-dayafter-humidity">65%</span></div>
+                            <div class="detail">風速: <span id="sapporo-dayafter-wind">1.8m/s</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weather-update">
+                    <span id="sapporo-update-time">最終更新: --:--</span>
+                </div>
             </div>
         </div>
         
