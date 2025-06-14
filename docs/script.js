@@ -492,7 +492,7 @@ async function fetchJMAWeatherData(cityId) {
 // 気象庁データの解析・変換
 function parseJMAWeatherData(jmaData, cityId) {
     try {
-        if (!Array.isArray(jmaData) || jmaData.length === 0) {
+        if (!Array.isArray(jmaData) || jmaData.length < 2) {
             console.error('Invalid JMA data structure');
             return null;
         }
@@ -500,32 +500,19 @@ function parseJMAWeatherData(jmaData, cityId) {
         const forecasts = [];
         const cityName = getCityNameJapanese(cityId);
         
-        // 主要な予報データを取得
-        const mainForecast = jmaData[0];
-        if (!mainForecast?.timeSeries?.[0]) {
-            console.error('No main forecast data found');
-            return null;
-        }
+        // 天気データを取得（data[0].timeSeries[0]）
+        const weatherData = jmaData[0].timeSeries[0].areas[0];
+        console.log('JMA weather codes:', weatherData.weatherCodes);
+        console.log('JMA weather descriptions:', weatherData.weathers);
         
-        const weatherSeries = mainForecast.timeSeries[0];
-        const area = weatherSeries.areas[0];
+        // 気温データを取得（data[1].timeSeries[1]）
+        const tempData = jmaData[1].timeSeries[1].areas[0];
+        console.log('JMA temperature data:', tempData.tempsMax, tempData.tempsMinUpper);
         
-        console.log('JMA weather codes:', area.weatherCodes);
-        console.log('JMA weather descriptions:', area.weathers);
-        
-        // 気温データを取得（data[1].timeSeries[1]にある）
-        let tempData = null;
-        if (jmaData[1] && jmaData[1].timeSeries && jmaData[1].timeSeries[1] && jmaData[1].timeSeries[1].areas[0]) {
-            tempData = jmaData[1].timeSeries[1].areas[0];
-            console.log('JMA temperature data found in data[1].timeSeries[1]:', tempData);
-        }
-        
-        // 最大3日分の予報を生成
-        const maxDays = Math.min(3, area.weatherCodes?.length || 0);
-        
-        for (let i = 0; i < maxDays; i++) {
-            const weatherCode = area.weatherCodes[i];
-            const weatherText = area.weathers[i];
+        // 3日分の予報を生成
+        for (let i = 0; i < 3; i++) {
+            const weatherCode = weatherData.weatherCodes[i];
+            const weatherText = weatherData.weathers[i];
             
             // 天気コードから情報を取得
             const weatherInfo = JMA_WEATHER_CODES[weatherCode] || {
@@ -534,29 +521,11 @@ function parseJMAWeatherData(jmaData, cityId) {
                 emoji: '🌤️'
             };
             
-            // 実際の気温データまたはフォールバック
-            let highTemp, lowTemp;
+            // 実際の気温データを使用（i+1で空文字をスキップ）
+            const highTemp = parseInt(tempData.tempsMax[i + 1]);
+            const lowTemp = parseInt(tempData.tempsMinUpper[i + 1]);
             
-            if (tempData && tempData.tempsMax && tempData.tempsMinUpper) {
-                // 実際の気温データを使用（空文字をスキップ）
-                const maxTemp = tempData.tempsMax[i + 1]; // +1で空文字をスキップ
-                const minTemp = tempData.tempsMinUpper[i + 1]; // tempsMinUpperを使用
-                
-                if (maxTemp && maxTemp !== "" && minTemp && minTemp !== "") {
-                    highTemp = parseInt(maxTemp);
-                    lowTemp = parseInt(minTemp);
-                    console.log(`Day ${i}: High=${highTemp}°C, Low=${lowTemp}°C (気象庁データ)`);
-                }
-            }
-            
-            // 気温データがない場合はフォールバック
-            if (!highTemp || !lowTemp) {
-                const baseTempHigh = { tokyo: 25, kochi: 27, naha: 28, sapporo: 15 }[cityId] || 22;
-                const baseTempLow = { tokyo: 18, kochi: 21, naha: 24, sapporo: 8 }[cityId] || 15;
-                highTemp = baseTempHigh - i;
-                lowTemp = baseTempLow - i;
-                console.log(`Day ${i}: Using fallback temps - High=${highTemp}°C, Low=${lowTemp}°C`);
-            }
+            console.log(`Day ${i}: High=${highTemp}°C, Low=${lowTemp}°C (気象庁データ)`);
             
             forecasts.push({
                 day: ['today', 'tomorrow', 'dayafter'][i],
