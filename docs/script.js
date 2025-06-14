@@ -1,3 +1,345 @@
+// ===== TODOリスト機能 =====
+
+// TODOデータ管理
+let todos = [];
+let currentFilter = 'all';
+let todoIdCounter = 1;
+
+// ローカルストレージのキー
+const STORAGE_KEY = 'personal-dashboard-todos';
+
+// TODOシステム初期化
+function initializeTodoSystem() {
+    console.log('📋 Initializing TODO system...');
+    
+    // ローカルストレージからデータを読み込み
+    loadTodosFromStorage();
+    
+    // 入力フィールドにイベントリスナーを追加
+    const todoInput = document.getElementById('todo-input');
+    if (todoInput) {
+        todoInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+        
+        // 入力フィールドのフォーカス
+        todoInput.focus();
+    }
+    
+    // 初期表示更新
+    renderTodos();
+    updateTodoStats();
+    updateFilterCounts();
+    
+    console.log('✅ TODO system initialized');
+}
+
+// ローカルストレージからTODOデータを読み込み
+function loadTodosFromStorage() {
+    try {
+        const storedTodos = localStorage.getItem(STORAGE_KEY);
+        if (storedTodos) {
+            todos = JSON.parse(storedTodos);
+            
+            // IDカウンターを最大値+1に設定
+            if (todos.length > 0) {
+                todoIdCounter = Math.max(...todos.map(todo => todo.id)) + 1;
+            }
+            
+            console.log(`📂 Loaded ${todos.length} todos from storage`);
+        } else {
+            console.log('📂 No stored todos found, starting fresh');
+        }
+    } catch (error) {
+        console.error('❌ Failed to load todos from storage:', error);
+        todos = [];
+    }
+}
+
+// TODOデータをローカルストレージに保存
+function saveTodosToStorage() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+        console.log(`💾 Saved ${todos.length} todos to storage`);
+    } catch (error) {
+        console.error('❌ Failed to save todos to storage:', error);
+    }
+}
+
+// 新しいTODOを追加
+function addTodo() {
+    const todoInput = document.getElementById('todo-input');
+    const todoText = todoInput.value.trim();
+    
+    if (todoText === '') {
+        // 入力フィールドを振動させる
+        todoInput.style.animation = 'shake 0.5s';
+        setTimeout(() => {
+            todoInput.style.animation = '';
+        }, 500);
+        return;
+    }
+    
+    // 新しいTODOオブジェクトを作成
+    const newTodo = {
+        id: todoIdCounter++,
+        text: todoText,
+        completed: false,
+        createdAt: new Date().toISOString(),
+        completedAt: null
+    };
+    
+    // 配列の先頭に追加（新しいものが上に表示される）
+    todos.unshift(newTodo);
+    
+    // ローカルストレージに保存
+    saveTodosToStorage();
+    
+    // 入力フィールドをクリア
+    todoInput.value = '';
+    
+    // 表示を更新
+    renderTodos();
+    updateTodoStats();
+    updateFilterCounts();
+    
+    // 成功のフィードバック
+    console.log(`✅ Added new todo: "${todoText}"`);
+    
+    // 追加アニメーション効果
+    setTimeout(() => {
+        const firstTodoItem = document.querySelector('.todo-item');
+        if (firstTodoItem) {
+            firstTodoItem.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(56, 142, 60, 0.2) 100%)';
+            setTimeout(() => {
+                firstTodoItem.style.background = '';
+            }, 1000);
+        }
+    }, 100);
+}
+
+// TODOの完了状態を切り替え
+function toggleTodo(todoId) {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    
+    todo.completed = !todo.completed;
+    todo.completedAt = todo.completed ? new Date().toISOString() : null;
+    
+    // ローカルストレージに保存
+    saveTodosToStorage();
+    
+    // 表示を更新
+    renderTodos();
+    updateTodoStats();
+    updateFilterCounts();
+    
+    console.log(`🔄 Toggled todo ${todoId}: ${todo.completed ? 'completed' : 'active'}`);
+}
+
+// TODOを削除
+function deleteTodo(todoId) {
+    const todoIndex = todos.findIndex(t => t.id === todoId);
+    if (todoIndex === -1) return;
+    
+    const deletedTodo = todos[todoIndex];
+    
+    // アニメーション効果
+    const todoElement = document.querySelector(`[data-todo-id="${todoId}"]`);
+    if (todoElement) {
+        todoElement.style.animation = 'slideOut 0.3s ease-in-out';
+        setTimeout(() => {
+            // 配列から削除
+            todos.splice(todoIndex, 1);
+            
+            // ローカルストレージに保存
+            saveTodosToStorage();
+            
+            // 表示を更新
+            renderTodos();
+            updateTodoStats();
+            updateFilterCounts();
+            
+            console.log(`🗑️ Deleted todo: "${deletedTodo.text}"`);
+        }, 300);
+    } else {
+        // 即座に削除
+        todos.splice(todoIndex, 1);
+        saveTodosToStorage();
+        renderTodos();
+        updateTodoStats();
+        updateFilterCounts();
+    }
+}
+
+// 完了済みTODOを一括削除
+function clearCompletedTodos() {
+    const completedCount = todos.filter(todo => todo.completed).length;
+    
+    if (completedCount === 0) {
+        return;
+    }
+    
+    // 確認ダイアログ
+    if (confirm(`完了済みの${completedCount}件のタスクを削除しますか？`)) {
+        todos = todos.filter(todo => !todo.completed);
+        
+        // ローカルストレージに保存
+        saveTodosToStorage();
+        
+        // 表示を更新
+        renderTodos();
+        updateTodoStats();
+        updateFilterCounts();
+        
+        console.log(`🧹 Cleared ${completedCount} completed todos`);
+    }
+}
+
+// フィルターを適用
+function filterTodos(filter) {
+    currentFilter = filter;
+    
+    // フィルターボタンの状態を更新
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+    
+    // 表示を更新
+    renderTodos();
+    
+    console.log(`🔍 Applied filter: ${filter}`);
+}
+
+// TODOリストをレンダリング
+function renderTodos() {
+    const todoList = document.getElementById('todo-list');
+    const emptyState = document.getElementById('todo-empty-state');
+    
+    if (!todoList || !emptyState) return;
+    
+    // フィルタリングされたTODOを取得
+    const filteredTodos = getFilteredTodos();
+    
+    if (filteredTodos.length === 0) {
+        // 空状態を表示
+        todoList.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        
+        // 空状態のメッセージを現在のフィルターに応じて調整
+        const emptyTitle = emptyState.querySelector('.empty-title');
+        const emptySubtitle = emptyState.querySelector('.empty-subtitle');
+        
+        switch (currentFilter) {
+            case 'active':
+                emptyTitle.textContent = '未完了のタスクがありません';
+                emptySubtitle.textContent = 'すべてのタスクが完了しています！';
+                break;
+            case 'completed':
+                emptyTitle.textContent = '完了済みのタスクがありません';
+                emptySubtitle.textContent = 'タスクを完了してください';
+                break;
+            default:
+                emptyTitle.textContent = 'タスクがありません';
+                emptySubtitle.textContent = '上のフォームから新しいタスクを追加してください';
+        }
+    } else {
+        // TODOリストを表示
+        emptyState.classList.add('hidden');
+        
+        todoList.innerHTML = filteredTodos.map(todo => `
+            <div class="todo-item ${todo.completed ? 'completed' : ''}" data-todo-id="${todo.id}">
+                <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" 
+                     onclick="toggleTodo(${todo.id})"></div>
+                <div class="todo-text">${escapeHtml(todo.text)}</div>
+                <button class="todo-delete" onclick="deleteTodo(${todo.id})" title="削除">
+                    🗑️
+                </button>
+            </div>
+        `).join('');
+    }
+}
+
+// 現在のフィルターに基づいてTODOをフィルタリング
+function getFilteredTodos() {
+    switch (currentFilter) {
+        case 'active':
+            return todos.filter(todo => !todo.completed);
+        case 'completed':
+            return todos.filter(todo => todo.completed);
+        default:
+            return todos;
+    }
+}
+
+// 統計情報を更新
+function updateTodoStats() {
+    const completedCount = todos.filter(todo => todo.completed).length;
+    const remainingCount = todos.filter(todo => !todo.completed).length;
+    
+    // 統計数値を更新
+    const completedStats = document.getElementById('completed-stats');
+    const remainingStats = document.getElementById('remaining-stats');
+    
+    if (completedStats) completedStats.textContent = completedCount;
+    if (remainingStats) remainingStats.textContent = remainingCount;
+    
+    // 完了済み削除ボタンの状態を更新
+    const clearBtn = document.getElementById('clear-completed-btn');
+    if (clearBtn) {
+        clearBtn.disabled = completedCount === 0;
+        clearBtn.style.opacity = completedCount === 0 ? '0.4' : '1';
+    }
+}
+
+// フィルターカウントを更新
+function updateFilterCounts() {
+    const allCount = todos.length;
+    const activeCount = todos.filter(todo => !todo.completed).length;
+    const completedCount = todos.filter(todo => todo.completed).length;
+    
+    // 各フィルターボタンのカウントを更新
+    const allCountElement = document.getElementById('all-count');
+    const activeCountElement = document.getElementById('active-count');
+    const completedCountElement = document.getElementById('completed-count');
+    
+    if (allCountElement) allCountElement.textContent = allCount;
+    if (activeCountElement) activeCountElement.textContent = activeCount;
+    if (completedCountElement) completedCountElement.textContent = completedCount;
+}
+
+// HTMLエスケープ関数（XSS対策）
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// アニメーション用CSSの追加
+const todoAnimationCSS = `
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-100%) scale(0.8);
+    }
+}
+`;
+
+// ===== 時刻表示機能 =====
+
 // 現在時刻を表示する関数
 function updateTime() {
     const now = new Date();
@@ -369,6 +711,125 @@ async function refreshJMAWeatherData() {
     await updateAllCitiesJMAWeather();
 }
 
+// CSS を動的に追加
+if (!document.getElementById('todo-animations')) {
+    const style = document.createElement('style');
+    style.id = 'todo-animations';
+    style.textContent = todoAnimationCSS;
+    document.head.appendChild(style);
+}
+
+// デモ用のサンプルTODOを追加する関数（開発用）
+function addSampleTodos() {
+    const sampleTodos = [
+        'Personal Dashboardを完成させる',
+        '気象庁APIの動作確認',
+        'GitHub Pagesでの公開確認',
+        'レスポンシブデザインのテスト',
+        'TODOリスト機能のテスト'
+    ];
+    
+    sampleTodos.forEach((text, index) => {
+        const todo = {
+            id: todoIdCounter++,
+            text: text,
+            completed: index === 2, // 3番目のタスクを完了済みに
+            createdAt: new Date(Date.now() - (index * 60000)).toISOString(), // 時間をずらす
+            completedAt: index === 2 ? new Date().toISOString() : null
+        };
+        todos.push(todo);
+    });
+    
+    saveTodosToStorage();
+    renderTodos();
+    updateTodoStats();
+    updateFilterCounts();
+    
+    console.log('📝 Added sample todos for testing');
+}
+
+// 開発用：ストレージをクリアする関数
+function clearAllTodos() {
+    if (confirm('すべてのTODOデータを削除しますか？この操作は取り消せません。')) {
+        todos = [];
+        saveTodosToStorage();
+        renderTodos();
+        updateTodoStats();
+        updateFilterCounts();
+        console.log('🧹 All todos cleared');
+    }
+}
+
+// エクスポート/インポート機能（将来の拡張用）
+function exportTodos() {
+    const dataStr = JSON.stringify(todos, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `personal-dashboard-todos-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    console.log('📤 Todos exported to file');
+}
+
+function importTodos(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedTodos = JSON.parse(e.target.result);
+            if (Array.isArray(importedTodos)) {
+                todos = importedTodos;
+                saveTodosToStorage();
+                renderTodos();
+                updateTodoStats();
+                updateFilterCounts();
+                console.log(`📥 Imported ${todos.length} todos from file`);
+            } else {
+                throw new Error('Invalid file format');
+            }
+        } catch (error) {
+            console.error('❌ Failed to import todos:', error);
+            alert('TODOファイルの読み込みに失敗しました。正しいファイルを選択してください。');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// 統計情報の詳細計算
+function getTodoStatistics() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    const stats = {
+        total: todos.length,
+        completed: todos.filter(todo => todo.completed).length,
+        active: todos.filter(todo => !todo.completed).length,
+        completedToday: todos.filter(todo => {
+            if (!todo.completedAt) return false;
+            const completedDate = new Date(todo.completedAt);
+            return completedDate >= today;
+        }).length,
+        createdToday: todos.filter(todo => {
+            const createdDate = new Date(todo.createdAt);
+            return createdDate >= today;
+        }).length,
+        completionRate: todos.length > 0 ? Math.round((todos.filter(todo => todo.completed).length / todos.length) * 100) : 0
+    };
+    
+    return stats;
+}
+
+// コンソールに統計情報を表示（デバッグ用）
+function showTodoStats() {
+    const stats = getTodoStatistics();
+    console.log('📊 TODO Statistics:', stats);
+    return stats;
+}
+
 // ページ読み込み時に実行
 document.addEventListener('DOMContentLoaded', function() {
     updateTime(); // 最初の表示
@@ -377,5 +838,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 気象庁API天気更新を開始
     startJMAWeatherUpdates();
     
-    console.log('Personal Dashboard（気象庁API版）初期化完了');
+    // TODOシステムを初期化
+    initializeTodoSystem();
+    
+    console.log('Personal Dashboard（気象庁API + TODO版）初期化完了');
 });

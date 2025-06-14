@@ -347,6 +347,434 @@ h2 {
     background: #a8a8a8;
 }
 
+/* ===== TODOセクション ===== */
 .todo-section {
-    margin-top: 30px;
+    margin-top: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.todo-section h2 {
+    color: white;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+}
+
+/* タスク入力フォーム */
+.todo-input-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    align-items: stretch;
+}
+
+#todo-input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+#todo-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#todo-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#add-todo-btn {
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    border: none;
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+#add-todo-btn:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #d84315 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+#add-todo-btn:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+.btn-text {
+    font-size: 0.95rem;
+}
+
+/* フィルタータブ */
+.todo-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.filter-count {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* TODOリスト表示エリア */
+.todo-list-container {
+    position: relative;
+    min-height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    margin-bottom: 25px;
+}
+
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 個別TODOアイテム */
+.todo-item {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.todo-item:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.todo-item.completed {
+    opacity: 0.7;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(56, 142, 60, 0.1) 100%);
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    opacity: 0.8;
+}
+
+/* チェックボックス */
+.todo-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.todo-checkbox:hover {
+    border-color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.todo-checkbox.checked {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    border-color: #4caf50;
+}
+
+.todo-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* TODO テキスト部分 */
+.todo-text {
+    flex: 1;
+    font-size: 1rem;
+    line-height: 1.4;
+    word-break: break-word;
+    transition: all 0.3s ease;
+}
+
+/* TODO 削除ボタン */
+.todo-delete {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+.todo-delete:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #d84315 100%);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.todo-delete:active {
+    transform: scale(0.95);
+}
+
+/* 空状態表示 */
+.todo-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    opacity: 0.8;
+}
+
+.todo-empty-state.hidden {
+    display: none;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.6;
+}
+
+.empty-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    opacity: 0.9;
+}
+
+.empty-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    line-height: 1.4;
+}
+
+/* 統計・操作パネル */
+.todo-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.stats-info {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stats-text {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.stats-text span {
+    font-weight: 600;
+    color: #ffd700;
+}
+
+.clear-btn {
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.clear-btn:hover {
+    background: linear-gradient(135deg, #ff8f00 0%, #ef6c00 100%);
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.clear-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* フィルターされたアイテムの非表示 */
+.todo-item.filtered-hidden {
+    display: none;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .todo-section {
+        padding: 20px;
+        margin-top: 30px;
+    }
+    
+    .todo-input-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #add-todo-btn {
+        justify-content: center;
+        padding: 12px 20px;
+    }
+    
+    .todo-filters {
+        gap: 8px;
+    }
+    
+    .filter-btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+    
+    .todo-item {
+        padding: 15px;
+        gap: 12px;
+    }
+    
+    .todo-stats {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .stats-info {
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .clear-btn {
+        align-self: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .todo-section {
+        padding: 15px;
+    }
+    
+    .todo-section h2 {
+        font-size: 1.3rem;
+    }
+    
+    .filter-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .todo-item {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .todo-text {
+        font-size: 0.9rem;
+    }
+    
+    .todo-delete {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .stats-info {
+        gap: 12px;
+    }
+    
+    .stats-text {
+        font-size: 0.85rem;
+    }
 }

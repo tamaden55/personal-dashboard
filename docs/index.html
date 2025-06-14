@@ -314,8 +314,56 @@
         </div>
         
         <div class="todo-section">
-            <h2>TODO</h2>
-            <p>（準備中）</p>
+            <h2>📋 TODOリスト</h2>
+            
+            <!-- タスク追加フォーム -->
+            <div class="todo-input-container">
+                <input type="text" id="todo-input" placeholder="新しいタスクを入力..." maxlength="100">
+                <button id="add-todo-btn" onclick="addTodo()">
+                    <span class="btn-icon">➕</span>
+                    <span class="btn-text">追加</span>
+                </button>
+            </div>
+            
+            <!-- フィルタータブ -->
+            <div class="todo-filters">
+                <button class="filter-btn active" onclick="filterTodos('all')" data-filter="all">
+                    すべて <span class="filter-count" id="all-count">0</span>
+                </button>
+                <button class="filter-btn" onclick="filterTodos('active')" data-filter="active">
+                    未完了 <span class="filter-count" id="active-count">0</span>
+                </button>
+                <button class="filter-btn" onclick="filterTodos('completed')" data-filter="completed">
+                    完了済み <span class="filter-count" id="completed-count">0</span>
+                </button>
+            </div>
+            
+            <!-- TODOリスト表示エリア -->
+            <div class="todo-list-container">
+                <div id="todo-list" class="todo-list">
+                    <!-- タスクがここに動的に追加されます -->
+                </div>
+                
+                <!-- 空状態の表示 -->
+                <div id="todo-empty-state" class="todo-empty-state">
+                    <div class="empty-icon">📝</div>
+                    <div class="empty-title">タスクがありません</div>
+                    <div class="empty-subtitle">上のフォームから新しいタスクを追加してください</div>
+                </div>
+            </div>
+            
+            <!-- 統計・操作パネル -->
+            <div class="todo-stats">
+                <div class="stats-info">
+                    <span class="stats-text">完了: <span id="completed-stats">0</span>件</span>
+                    <span class="stats-text">残り: <span id="remaining-stats">0</span>件</span>
+                </div>
+                <div class="stats-actions">
+                    <button class="clear-btn" onclick="clearCompletedTodos()" id="clear-completed-btn">
+                        🗑️ 完了済みを削除
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     
