@@ -513,6 +513,13 @@ function parseJMAWeatherData(jmaData, cityId) {
         console.log('JMA weather codes:', area.weatherCodes);
         console.log('JMA weather descriptions:', area.weathers);
         
+        // 気温データを取得（気温データは別のtimeSeriesにある）
+        let tempData = null;
+        if (mainForecast.timeSeries[1] && mainForecast.timeSeries[1].areas[0]) {
+            tempData = mainForecast.timeSeries[1].areas[0];
+            console.log('JMA temperature data:', tempData);
+        }
+        
         // 最大3日分の予報を生成
         const maxDays = Math.min(3, area.weatherCodes?.length || 0);
         
@@ -527,17 +534,32 @@ function parseJMAWeatherData(jmaData, cityId) {
                 emoji: '🌤️'
             };
             
-            // 基本気温（フォールバック）
-            const baseTempHigh = { tokyo: 25, kochi: 27, naha: 28, sapporo: 15 }[cityId] || 22;
-            const baseTempLow = { tokyo: 18, kochi: 21, naha: 24, sapporo: 8 }[cityId] || 15;
+            // 実際の気温データまたはフォールバック
+            let highTemp, lowTemp;
+            
+            if (tempData && tempData.tempsMax && tempData.tempsMin) {
+                // 実際の気温データを使用
+                highTemp = parseInt(tempData.tempsMax[i]) || null;
+                lowTemp = parseInt(tempData.tempsMin[i]) || null;
+                console.log(`Day ${i}: High=${highTemp}°C, Low=${lowTemp}°C`);
+            }
+            
+            // 気温データがない場合はフォールバック
+            if (!highTemp || !lowTemp) {
+                const baseTempHigh = { tokyo: 25, kochi: 27, naha: 28, sapporo: 15 }[cityId] || 22;
+                const baseTempLow = { tokyo: 18, kochi: 21, naha: 24, sapporo: 8 }[cityId] || 15;
+                highTemp = baseTempHigh - i;
+                lowTemp = baseTempLow - i;
+                console.log(`Day ${i}: Using fallback temps - High=${highTemp}°C, Low=${lowTemp}°C`);
+            }
             
             forecasts.push({
                 day: ['today', 'tomorrow', 'dayafter'][i],
                 condition: weatherInfo.condition,
                 description: weatherInfo.description,
                 emoji: weatherInfo.emoji,
-                high: baseTempHigh - i,
-                low: baseTempLow - i,
+                high: highTemp,
+                low: lowTemp,
                 humidity: 60 + (Math.random() * 20 - 10),
                 wind: (Math.random() * 3 + 1).toFixed(1),
                 source: 'JMA',
