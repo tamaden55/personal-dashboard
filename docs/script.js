@@ -549,11 +549,16 @@ function parseJMAWeatherData(jmaData, cityId) {
             // 実際の気温データまたはフォールバック
             let highTemp, lowTemp;
             
-            if (tempData && tempData.tempsMax && tempData.tempsMin) {
-                // 実際の気温データを使用
-                highTemp = parseInt(tempData.tempsMax[i]) || null;
-                lowTemp = parseInt(tempData.tempsMin[i]) || null;
-                console.log(`Day ${i}: High=${highTemp}°C, Low=${lowTemp}°C`);
+            if (tempData && tempData.tempsMax && tempData.tempsMinUpper) {
+                // 実際の気温データを使用（空文字をスキップ）
+                const maxTemp = tempData.tempsMax[i + 1]; // +1で空文字をスキップ
+                const minTemp = tempData.tempsMinUpper[i + 1]; // tempsMinUpperを使用
+                
+                if (maxTemp && maxTemp !== "" && minTemp && minTemp !== "") {
+                    highTemp = parseInt(maxTemp);
+                    lowTemp = parseInt(minTemp);
+                    console.log(`Day ${i}: High=${highTemp}°C, Low=${lowTemp}°C (気象庁データ)`);
+                }
             }
             
             // 気温データがない場合はフォールバック
