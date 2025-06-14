@@ -515,11 +515,21 @@ function parseJMAWeatherData(jmaData, cityId) {
         
         // 気温データを取得（気温データは別のtimeSeriesにある）
         let tempData = null;
-        if (mainForecast.timeSeries[1] && mainForecast.timeSeries[1].areas[0]) {
-            tempData = mainForecast.timeSeries[1].areas[0];
-            console.log('JMA temperature data:', tempData);
-            console.log('tempsMax:', tempData.tempsMax);
-            console.log('tempsMin:', tempData.tempsMin);
+        
+        // 全てのtimeSeriesをチェック
+        console.log('All timeSeries:', mainForecast.timeSeries.length);
+        mainForecast.timeSeries.forEach((series, index) => {
+            console.log(`TimeSeries[${index}]:`, series.areas[0]);
+        });
+        
+        // 気温データを探す
+        for (let i = 0; i < mainForecast.timeSeries.length; i++) {
+            const series = mainForecast.timeSeries[i];
+            if (series.areas[0] && (series.areas[0].tempsMax || series.areas[0].tempsMin)) {
+                tempData = series.areas[0];
+                console.log(`Found temperature data in timeSeries[${i}]:`, tempData);
+                break;
+            }
         }
         
         // 最大3日分の予報を生成
