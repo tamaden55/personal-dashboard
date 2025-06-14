@@ -518,6 +518,8 @@ function parseJMAWeatherData(jmaData, cityId) {
         if (mainForecast.timeSeries[1] && mainForecast.timeSeries[1].areas[0]) {
             tempData = mainForecast.timeSeries[1].areas[0];
             console.log('JMA temperature data:', tempData);
+            console.log('tempsMax:', tempData.tempsMax);
+            console.log('tempsMin:', tempData.tempsMin);
         }
         
         // 最大3日分の予報を生成
